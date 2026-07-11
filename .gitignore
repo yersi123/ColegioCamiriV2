@@ -1,0 +1,9 @@
+/spec-kit/
+node_modules/
+.env
+.next/
+dist/
+/out/
+/build
+*.log
+logs/
