@@ -12,6 +12,7 @@ const navItems = [
   { label: 'Matrículas', href: '/secretaria/matriculas', icon: 'fa-file-signature' },
   { label: 'Pagos', href: '/secretaria/pagos', icon: 'fa-money-bill' },
   { label: 'Consultas', href: '/secretaria/consultas', icon: 'fa-search' },
+  { label: 'Reportes', href: '/secretaria/reportes', icon: 'fa-chart-bar' },
 ];
 
 export default function SecretariaLayout({ children }) {

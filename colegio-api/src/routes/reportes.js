@@ -15,7 +15,7 @@ export function reportesRouter(router) {
   router.get('/reportes/matricula', async (req, res) => {
     const userHolder = {};
     authMiddleware(req, res, userHolder);
-    requireRole('director')(userHolder.user);
+    requireRole('director', 'secretaria')(userHolder.user);
 
     const query = getQuery(req);
     const idgestion = Number(query.idgestion) || 0;
@@ -27,7 +27,7 @@ export function reportesRouter(router) {
   router.get('/reportes/mora', async (req, res) => {
     const userHolder = {};
     authMiddleware(req, res, userHolder);
-    requireRole('director')(userHolder.user);
+    requireRole('director', 'secretaria')(userHolder.user);
 
     const query = getQuery(req);
     const idgestion = Number(query.idgestion) || 0;
@@ -39,7 +39,7 @@ export function reportesRouter(router) {
   router.get('/reportes/ingresos', async (req, res) => {
     const userHolder = {};
     authMiddleware(req, res, userHolder);
-    requireRole('director')(userHolder.user);
+    requireRole('director', 'secretaria')(userHolder.user);
 
     const query = getQuery(req);
     const idgestion = Number(query.idgestion) || 0;
@@ -52,7 +52,7 @@ export function reportesRouter(router) {
   router.get('/reportes/becas', async (req, res) => {
     const userHolder = {};
     authMiddleware(req, res, userHolder);
-    requireRole('director')(userHolder.user);
+    requireRole('director', 'secretaria')(userHolder.user);
 
     const query = getQuery(req);
     const idgestion = Number(query.idgestion) || 0;
