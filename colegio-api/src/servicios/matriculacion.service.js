@@ -78,9 +78,11 @@ export async function verificarCapacidadCurso(idcurso, idgestion) {
 }
 
 export async function crearMatricula(data) {
-  const deudas = await verificarDeudas(data.ciestudiante, data.idgestion);
-  if (deudas.total > 0) {
-    throw new Error('El estudiante tiene ' + deudas.total + ' mensualidad(es) pendiente(s) en gestiones anteriores por un total de Bs ' + Number(deudas.monto_total).toFixed(2) + '. Debe cancelarlas antes de matricularse.');
+  if (!data.ignorarDeudas) {
+    const deudas = await verificarDeudas(data.ciestudiante, data.idgestion);
+    if (deudas.total > 0) {
+      throw new Error('El estudiante tiene ' + deudas.total + ' mensualidad(es) pendiente(s) en gestiones anteriores por un total de Bs ' + Number(deudas.monto_total).toFixed(2) + '. Debe cancelarlas antes de matricularse.');
+    }
   }
   await verificarCapacidadCurso(data.idcurso, data.idgestion);
 
@@ -168,9 +170,11 @@ export async function crearMatriculaConRegistro(data) {
   }
 
   // 7. Verificar deudas pendientes
-  const deudas = await verificarDeudas(data.ci, data.idgestion);
-  if (deudas.total > 0) {
-    throw new Error('El estudiante tiene ' + deudas.total + ' mensualidad(es) pendiente(s) en gestiones anteriores por un total de Bs ' + Number(deudas.monto_total).toFixed(2) + '. Debe cancelarlas antes de matricularse.');
+  if (!data.ignorarDeudas) {
+    const deudas = await verificarDeudas(data.ci, data.idgestion);
+    if (deudas.total > 0) {
+      throw new Error('El estudiante tiene ' + deudas.total + ' mensualidad(es) pendiente(s) en gestiones anteriores por un total de Bs ' + Number(deudas.monto_total).toFixed(2) + '. Debe cancelarlas antes de matricularse.');
+    }
   }
 
   // 8. Crear la matrícula

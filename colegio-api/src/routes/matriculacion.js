@@ -22,6 +22,7 @@ const createMatriculaSchema = z.object({
   idgestion: z.number({ message: 'idgestion requerido' }),
   idcurso: z.number({ message: 'idcurso requerido' }),
   codbeca: z.number().nullable().optional(),
+  ignorarDeudas: z.boolean().optional(),
 });
 
 const registroCompletoSchema = z.object({
@@ -34,6 +35,7 @@ const registroCompletoSchema = z.object({
   idgestion: z.number({ message: 'Gestión requerida' }),
   idcurso: z.number({ message: 'Curso requerido' }),
   codbeca: z.number().nullable().optional(),
+  ignorarDeudas: z.boolean().optional(),
   tutor: z.object({
     ci: z.string().min(5, 'CI mínimo 5 caracteres').max(10, 'CI máximo 10 caracteres'),
     nombre: z.string().min(3, 'Nombre mínimo 3 caracteres').max(100),

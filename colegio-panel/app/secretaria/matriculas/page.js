@@ -25,6 +25,8 @@ export default function MatriculasPage() {
   const [createCodbeca, setCreateCodbeca] = useState('');
   const [createLoading, setCreateLoading] = useState(false);
   const [createError, setCreateError] = useState('');
+  const [createDeudas, setCreateDeudas] = useState(null);
+  const [createIgnorarDeudas, setCreateIgnorarDeudas] = useState(false);
 
   // Estudiante seleccionado/creado
   const [estudianteSeleccionado, setEstudianteSeleccionado] = useState(null);
@@ -120,6 +122,8 @@ export default function MatriculasPage() {
     setCreateIdcurso('');
     setCreateCodbeca('');
     setCreateError('');
+    setCreateDeudas(null);
+    setCreateIgnorarDeudas(false);
     setCreateLoading(false);
     setShowCreateModal(true);
   };
@@ -171,11 +175,12 @@ export default function MatriculasPage() {
 
   const seleccionarEstudiante = async (persona) => {
     // Verificar deudas
+    setCreateDeudas(null);
+    setCreateIgnorarDeudas(false);
     try {
       const res = await api.matriculacion.verificarDeudas(token, persona.ci, createIdgestion);
       if (res.data && res.data.total > 0) {
-        setCreateError(`El estudiante tiene ${res.data.total} mensualidad(es) pendiente(s) por Bs ${Number(res.data.monto_total).toFixed(2)}. Debe cancelar antes de matricularse.`);
-        return;
+        setCreateDeudas(res.data);
       }
     } catch { /* continue */ }
 
@@ -285,6 +290,11 @@ export default function MatriculasPage() {
 
     setCreateLoading(true);
     try {
+      if (createDeudas && !createIgnorarDeudas) {
+        setCreateError('Debe marcar "Matricular con deuda pendiente" para continuar');
+        setCreateLoading(false);
+        return;
+      }
       const data = {
         ci: estudianteSeleccionado.ci,
         nombre: estudianteSeleccionado.nombre,
@@ -295,6 +305,7 @@ export default function MatriculasPage() {
         idgestion: Number(createIdgestion),
         idcurso: Number(createIdcurso),
         codbeca: createCodbeca ? Number(createCodbeca) : null,
+        ignorarDeudas: !!createIgnorarDeudas,
       };
       if (tutorSeleccionado) {
         data.tutor = {
@@ -508,6 +519,22 @@ export default function MatriculasPage() {
 
             <div style={{ padding: 24 }}>
               {createError && <div className="error-msg" style={{ marginBottom: 16 }}>{createError}</div>}
+
+              {createDeudas && (
+                <div style={{ marginBottom: 16, padding: '12px 16px', background: '#fef3c7', border: '1px solid #fbbf24', borderRadius: 8, fontSize: 13, color: '#92400e' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                    <i className="fas fa-exclamation-triangle" style={{ fontSize: 16 }}></i>
+                    <strong>Deuda pendiente</strong>
+                  </div>
+                  <p style={{ margin: '0 0 8px 0' }}>
+                    El estudiante tiene <strong>{createDeudas.total} mensualidad(es) pendiente(s)</strong> de gestiones anteriores por un total de <strong>Bs {Number(createDeudas.monto_total).toFixed(2)}</strong>.
+                  </p>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontSize: 13 }}>
+                    <input type="checkbox" checked={createIgnorarDeudas} onChange={(e) => setCreateIgnorarDeudas(e.target.checked)} />
+                    Matricular con deuda pendiente
+                  </label>
+                </div>
+              )}
 
               <form onSubmit={handleCreateSubmit}>
                 {/* SECCIÓN 1: ESTUDIANTE */}
